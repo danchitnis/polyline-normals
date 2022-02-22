@@ -1,4 +1,6 @@
-//var util = require('polyline-miter-util')
+/**
+ *
+ */
 
 import { Vec2, add, normal, direction, normalize, set, dot } from "./vecTools.js";
 
@@ -7,51 +9,48 @@ export type NormalMiter = {
   miterLength: number;
 };
 
-export const PolyLine = (points: Vec2[], closed: boolean): NormalMiter[] => {
+export const PolyLine = (linePoints: Vec2[], closed: boolean): NormalMiter[] => {
   let curNormal = null as Vec2;
   let lineA = { x: 0, y: 0 } as Vec2;
   let lineB = { x: 0, y: 0 } as Vec2;
   let out = [] as NormalMiter[];
 
-  if (closed) {
-    points = points.slice();
-    points.push(points[0]);
-  }
+  const addNext = (normal: Vec2, length: number) => {
+    out.push({ vec2: normal, miterLength: length } as NormalMiter);
+  };
 
-  let totalPoints = points.length;
-  for (let i = 1; i < totalPoints; i++) {
-    let last = points[i - 1];
-    let cur = points[i];
-    let next = i < points.length - 1 ? points[i + 1] : null;
+  /*if (closed) {
+    linePoints = linePoints.slice();
+    linePoints.push(linePoints[0]);
+  }*/
+
+  // add initial normals
+  lineA = direction(linePoints[1], linePoints[0]);
+  curNormal = normal(lineA);
+  addNext(curNormal, 1);
+
+  for (let i = 1; i < linePoints.length - 1; i++) {
+    let last = linePoints[i - 1];
+    let cur = linePoints[i];
+    let next = linePoints[i + 1];
 
     lineA = direction(cur, last);
-    if (!curNormal) {
-      curNormal = normal(lineA);
-    }
 
-    const addNext = (normal: Vec2, length: number) => {
-      out.push({ vec2: normal, miterLength: length } as NormalMiter);
-    };
+    curNormal = normal(lineA);
 
-    if (i === 1)
-      //add initial normals
-      addNext(curNormal, 1);
+    lineB = direction(next, cur);
 
-    if (!next) {
-      //no miter, simple segment
-      curNormal = normal(lineA); //reset normal
-      addNext(curNormal, 1);
-    } else {
-      //miter with last
-      //get unit dir of next line
-      lineB = direction(next, cur);
-
-      //stores tangent & miter
-      let miter = computeMiter(lineA, lineB);
-      let miterLen = computeMiterLen(lineA, miter, 1);
-      addNext(miter, miterLen);
-    }
+    //stores tangent & miter
+    let miter = computeMiter(lineA, lineB);
+    let miterLen = computeMiterLen(lineA, miter, 1);
+    addNext(miter, miterLen);
   }
+
+  // add last normal
+  // no miter, simple segment
+  lineA = direction(linePoints[linePoints.length - 1], linePoints[linePoints.length - 2]);
+  curNormal = normal(lineA); //reset normal
+  addNext(curNormal, 1);
 
   //if the polyline is a closed loop, clean up the last normal??????????????
   /*if (points.length > 2 && closed) {

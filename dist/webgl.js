@@ -1,11 +1,12 @@
 /**
  *
+ * https://www.tutorialspoint.com/webgl/webgl_drawing_a_triangle.htm
+ * https://webglfundamentals.org/webgl/lessons/webgl-points-lines-triangles.html
  */
-export const draw = (canvas, vertices) => {
+export const drawTriangles = (canvas, vertices) => {
     let gl = canvas.getContext("webgl");
     /*======== Defining and storing the geometry ===========*/
     //let vertices = new Float32Array([0, 0, 0.0, 0.5, 0.5, 0.0]);
-    //let indices = [0, 1, 2];
     // Create an empty buffer object to store vertex buffer
     let vertexBuffer = gl.createBuffer();
     // Bind appropriate array buffer to it
@@ -14,14 +15,6 @@ export const draw = (canvas, vertices) => {
     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STREAM_DRAW);
     // Unbind the buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
-    // Create an empty buffer object to store Index buffer
-    //let indexBuffer = gl.createBuffer();
-    // Bind appropriate array buffer to it
-    //gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    // Pass the vertex data to the buffer
-    //gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
-    // Unbind the buffer
-    //gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
     /*================ Shaders ====================*/
     // Vertex shader source code
     let vertCode = `
