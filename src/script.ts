@@ -1,4 +1,5 @@
-import { PolyLine, Vec2 } from "./thick.js";
+import { scaleAndAdd, Vec2 } from "./vecTools.js";
+import { PolyLine } from "./thick.js";
 
 /**
  * Adds two vec2's after scaling the second operand by a scalar value
@@ -9,12 +10,6 @@ import { PolyLine, Vec2 } from "./thick.js";
  * @param {Number} scale the amount to scale b by before adding
  * @returns {vec2} out
  */
-const scaleAndAdd = (a: Vec2, b: Vec2, scale: number): Vec2 => {
-  let out = { x: 0, y: 0 } as Vec2;
-  out.x = a.x + b.x * scale;
-  out.y = a.y + b.y * scale;
-  return out;
-};
 
 let line = [
   { x: 100, y: 100 },
